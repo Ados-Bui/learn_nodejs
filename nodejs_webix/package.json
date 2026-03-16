@@ -1,0 +1,12 @@
+{
+  "name": "nodejs_webix_ui",
+  "version": "1.0.0",
+  "description": "A simple UI for the notes API using Webix.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Notes App</title>
+    <!-- Webix Library -->
+    <script
+      type="text/javascript"
+      src="https://cdn.webix.com/edge/webix.js"
+    ></script>
+    <script type="text/javascript" src="./noteDialog.js"></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.webix.com/edge/webix.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css"
+    />
+  </head>
+  <body>
+    <script type="text/javascript" charset="utf-8">
+      webix.ready(function () {
+        const apiUrl = "http://localhost:3000/api/notes";
+
+        const notesCollection = new webix.DataCollection({
+          url: "rest->" + apiUrl,
+          save: "rest->" + apiUrl,
+          on: {
+            onParse: function (data) {
+              this.clearAll();
+              this.parse(data.data || data);
+            },
+          },
+        });
+
+        // --- Define the popup window ---
+        const notePopup = createNoteDialog(notesCollection);
+
+        // --- Define the main datatable ---
+        const notesTable = {
+          view: "datatable",
+          id: "notesTable",
+          columns: [
+            { id: "id", header: "#", width: 50, sort: "int" },
+            { id: "title", header: "Title", fillspace: true, sort: "string" },
+            {
+              id: "content",
+              header: "Content",
+              fillspace: true,
+              sort: "string",
+            },
+            {
+              id: "createdAt",
+              header: "Created",
+              format: webix.i18n.longDateFormatStr,
+              sort: "date",
+            },
+            {
+              id: "updatedAt",
+              header: "Updated",
+              format: webix.i18n.longDateFormatStr,
+              sort: "date",
+            },
+            {
+              id: "delete",
+              header: "",
+              template: "{common.trashIcon()}",
+              width: 60,
+            },
+          ],
+          onClick: {
+            "wxi-trash": function (e, id) {
+              webix.confirm({
+                title: "Delete Note",
+                text: "Are you sure you want to delete this note?",
+                callback: function (result) {
+                  if (result) {
+                    notesCollection.remove(id.row);
+                  }
+                },
+              });
+              return false;
+            },
+          },
+          on: {
+            onItemDblClick: function (id) {
+              const item = this.getItem(id);
+              $$("note_form_popup").setValues(item); // Target the correct form
+              notePopup.show();
+            },
+          },
+        };
+
+        // --- Define the main UI layout ---
+        webix.ui({
+          rows: [
+            {
+              view: "toolbar",
+              height: 56,
+              elements: [
+                { view: "icon", icon: "mdi mdi-menu" },
+                { view: "label", label: "Notes Management" },
+                {},
+                { view: "icon", icon: "mdi mdi-bell", badge: 3 },
+                { view: "icon", icon: "mdi mdi-settings" },
+              ],
+            },
+            {
+              view: "toolbar",
+              elements: [
+                { view: "label", label: "All Notes" },
+                {},
+                {
+                  view: "button",
+                  value: "Create new note",
+                  css: "webix_primary",
+                  autowidth: true,
+                  click: function () {
+                    const form = $$("note_form_popup"); // Target the correct form
+                    form.clear();
+                    form.clearValidation();
+                    notePopup.show();
+                  },
+                },
+              ],
+            },
+            notesTable,
+          ],
+        });
+
+        $$("notesTable").sync(notesCollection);
+      });
+    </script>
+  </body>
+</html>
