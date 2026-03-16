@@ -35,18 +35,15 @@ function createNoteDialog(notesCollection) {
               click: function () {
                 const form = this.getFormView(); // Correctly get the form within the popup
                 if (form.validate()) {
-                  notesCollection
-                    .save(form.getValues())
-                    .then(() => {
-                      webix.message("Note saved!");
-                      this.getTopParentView().hide();
-                    })
-                    .fail(() => {
-                      webix.message({
-                        type: "error",
-                        text: "Error saving note.",
-                      });
-                    });
+                  const values = form.getValues();
+                  const popup = this.getTopParentView();
+                  if (values.id) {
+                    notesCollection.updateItem(values.id, values);
+                  } else {
+                    notesCollection.add(values);
+                  }
+                  webix.message("Note saved!");
+                  popup.hide();
                 }
               },
             },
