@@ -1,0 +1,8 @@
+FROM nginx:latest
+
+# Cài openssl để tạo self-signed certificate
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
+# Copy script tạo certificate
+COPY ssl/generate-cert.sh /docker-entrypoint.d/00-generate-cert.sh
+RUN chmod +x /docker-entrypoint.d/00-generate-cert.sh

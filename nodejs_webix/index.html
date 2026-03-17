@@ -26,8 +26,8 @@
         const apiUrl = "http://localhost:3000/api/notes";
 
         const notesCollection = new webix.DataCollection({
-          url: "rest->" + apiUrl,
-          save: "rest->" + apiUrl,
+          url: apiUrl,
+          datatype: "json",
           on: {
             onParse: function (data) {
               this.clearAll();
@@ -55,14 +55,24 @@
             {
               id: "createdAt",
               header: "Created",
-              format: webix.i18n.longDateFormatStr,
+              width: 180,
               sort: "date",
+              template: function (obj) {
+                if (!obj.createdAt) return "";
+                var d = new Date(obj.createdAt);
+                return webix.Date.dateToStr("%d/%m/%Y %H:%i")(d);
+              },
             },
             {
               id: "updatedAt",
               header: "Updated",
-              format: webix.i18n.longDateFormatStr,
+              width: 180,
               sort: "date",
+              template: function (obj) {
+                if (!obj.updatedAt) return "";
+                var d = new Date(obj.updatedAt);
+                return webix.Date.dateToStr("%d/%m/%Y %H:%i")(d);
+              },
             },
             {
               id: "delete",
@@ -73,12 +83,32 @@
           ],
           onClick: {
             "wxi-trash": function (e, id) {
+              var table = this;
+              var item = table.getItem(id);
               webix.confirm({
                 title: "Delete Note",
                 text: "Are you sure you want to delete this note?",
                 callback: function (result) {
                   if (result) {
-                    notesCollection.remove(id.row);
+                    // Gọi API DELETE với id thực từ database
+                    fetch(apiUrl + "/" + item.id, {
+                      method: "DELETE",
+                    })
+                      .then(function (res) {
+                        if (!res.ok) {
+                          throw new Error("Server error: " + res.status);
+                        }
+                        // Server trả về 204 No Content, không cần parse JSON
+                        webix.message("Note deleted!");
+                        notesCollection.clearAll();
+                        notesCollection.load(apiUrl);
+                      })
+                      .catch(function (err) {
+                        webix.message({
+                          text: "Error: " + err.message,
+                          type: "error",
+                        });
+                      });
                   }
                 },
               });
