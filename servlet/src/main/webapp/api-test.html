@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test - Servlet Learning</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔌 REST API Test</h1>
+            <p class="subtitle">Giao diện test <code>ApiServlet</code> - CRUD Todo List</p>
+
+            <!-- Add New Todo -->
+            <div class="info-box">
+                <h3>➕ Thêm Todo mới:</h3>
+                <form id="addTodoForm" class="form inline-form">
+                    <div class="form-group" style="flex:1">
+                        <input type="text" id="todoTitle" placeholder="Nhập tiêu đề todo..." required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Thêm</button>
+                </form>
+            </div>
+
+            <!-- Todo List -->
+            <div class="info-box">
+                <h3>📋 Danh sách Todos:</h3>
+                <div id="todoList">
+                    <p class="loading">Đang tải...</p>
+                </div>
+                <button onclick="loadTodos()" class="btn btn-primary" style="margin-top:12px">🔄 Refresh</button>
+            </div>
+
+            <!-- API Response -->
+            <div class="info-box">
+                <h3>📡 API Response (Raw JSON):</h3>
+                <pre id="apiResponse" class="code-block">// Response sẽ hiển thị ở đây...</pre>
+            </div>
+
+            <!-- API Docs -->
+            <div class="info-box">
+                <h3>📖 API Endpoints:</h3>
+                <table class="data-table">
+                    <tr><th>Method</th><th>URL</th><th>Mô tả</th></tr>
+                    <tr><td><span class="method get">GET</span></td><td><code>/api/todos</code></td><td>Lấy tất cả todos</td></tr>
+                    <tr><td><span class="method get">GET</span></td><td><code>/api/todos?id=1</code></td><td>Lấy 1 todo theo ID</td></tr>
+                    <tr><td><span class="method post">POST</span></td><td><code>/api/todos</code></td><td>Tạo todo mới</td></tr>
+                    <tr><td><span class="method delete">DELETE</span></td><td><code>/api/todos?id=1</code></td><td>Xóa todo theo ID</td></tr>
+                </table>
+            </div>
+
+            <a href="/" class="btn btn-back">← Về trang chủ</a>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // JavaScript gọi REST API từ Servlet
+        // ============================================
+
+        // Tải danh sách todos
+        async function loadTodos() {
+            try {
+                const res = await fetch('/api/todos');
+                const data = await res.json();
+                displayResponse(data);
+
+                const todoList = document.getElementById('todoList');
+                if (data.data && data.data.length > 0) {
+                    let html = '<table class="data-table">';
+                    html += '<tr><th>ID</th><th>Title</th><th>Status</th><th>Action</th></tr>';
+                    data.data.forEach(todo => {
+                        html += `<tr>
+                            <td>${todo.id}</td>
+                            <td>${escapeHtml(todo.title)}</td>
+                            <td>${todo.completed ? '✅ Done' : '⏳ Pending'}</td>
+                            <td><button onclick="deleteTodo(${todo.id})" class="btn btn-danger btn-sm">🗑️ Xóa</button></td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    todoList.innerHTML = html;
+                } else {
+                    todoList.innerHTML = '<p>Chưa có todo nào.</p>';
+                }
+            } catch (err) {
+                displayResponse({ error: err.message });
+            }
+        }
+
+        // Thêm todo mới
+        document.getElementById('addTodoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('todoTitle').value.trim();
+            if (!title) return;
+
+            try {
+                const res = await fetch('/api/todos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: title, completed: false })
+                });
+                const data = await res.json();
+                displayResponse(data);
+                document.getElementById('todoTitle').value = '';
+                loadTodos();
+            } catch (err) {
+                displayResponse({ error: err.message });
+            }
+        });
+
+        // Xóa todo
+        async function deleteTodo(id) {
+            try {
+                const res = await fetch(`/api/todos?id=${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                displayResponse(data);
+                loadTodos();
+            } catch (err) {
+                displayResponse({ error: err.message });
+            }
+        }
+
+        // Hiển thị JSON response
+        function displayResponse(data) {
+            document.getElementById('apiResponse').textContent = JSON.stringify(data, null, 2);
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load todos khi trang load
+        loadTodos();
+    </script>
+</body>
+</html>

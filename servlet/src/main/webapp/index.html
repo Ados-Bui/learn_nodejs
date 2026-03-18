@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servlet Learning Project</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="hero-badge">☕ Java Servlet</div>
+            <h1>Servlet Learning Project</h1>
+            <p class="hero-desc">
+                Dự án học tập Java Servlet với các ví dụ thực hành.<br>
+                Mỗi ví dụ minh họa một khái niệm quan trọng trong Servlet API.
+            </p>
+        </div>
+
+        <!-- Navigation Cards -->
+        <div class="nav-grid">
+            <!-- Hello Servlet -->
+            <a href="/hello" class="nav-card" id="card-hello">
+                <div class="nav-card-icon">👋</div>
+                <h2>Hello Servlet</h2>
+                <p>Servlet cơ bản nhất. Xử lý GET request, đọc query parameters, hiển thị thông tin request.</p>
+                <div class="nav-card-tags">
+                    <span class="tag">GET</span>
+                    <span class="tag">Query Params</span>
+                    <span class="tag">Response</span>
+                </div>
+                <div class="nav-card-url"><code>GET /hello?name=YourName</code></div>
+            </a>
+
+            <!-- Form Servlet -->
+            <a href="/form" class="nav-card" id="card-form">
+                <div class="nav-card-icon">📝</div>
+                <h2>Form Servlet</h2>
+                <p>Xử lý HTML form. So sánh GET vs POST, đọc form data, hiển thị kết quả.</p>
+                <div class="nav-card-tags">
+                    <span class="tag">GET</span>
+                    <span class="tag">POST</span>
+                    <span class="tag">Form Data</span>
+                </div>
+                <div class="nav-card-url"><code>GET/POST /form</code></div>
+            </a>
+
+            <!-- Session Servlet -->
+            <a href="/session" class="nav-card" id="card-session">
+                <div class="nav-card-icon">🔐</div>
+                <h2>Session Servlet</h2>
+                <p>Quản lý HTTP Session. Đếm lượt truy cập, lưu/đọc dữ liệu session, hủy session.</p>
+                <div class="nav-card-tags">
+                    <span class="tag">HttpSession</span>
+                    <span class="tag">Cookies</span>
+                    <span class="tag">State</span>
+                </div>
+                <div class="nav-card-url"><code>GET/POST /session</code></div>
+            </a>
+
+            <!-- Lifecycle Servlet -->
+            <a href="/lifecycle" class="nav-card" id="card-lifecycle">
+                <div class="nav-card-icon">🔄</div>
+                <h2>Lifecycle Servlet</h2>
+                <p>Vòng đời Servlet: Constructor → init() → service() → destroy(). Singleton pattern.</p>
+                <div class="nav-card-tags">
+                    <span class="tag">Lifecycle</span>
+                    <span class="tag">Singleton</span>
+                    <span class="tag">init/destroy</span>
+                </div>
+                <div class="nav-card-url"><code>GET /lifecycle</code></div>
+            </a>
+
+            <!-- API Servlet -->
+            <a href="/api-test.html" class="nav-card" id="card-api">
+                <div class="nav-card-icon">🔌</div>
+                <h2>REST API Servlet</h2>
+                <p>REST API trả về JSON. CRUD operations cho Todo list. Dùng Gson cho JSON.</p>
+                <div class="nav-card-tags">
+                    <span class="tag">REST API</span>
+                    <span class="tag">JSON</span>
+                    <span class="tag">CRUD</span>
+                </div>
+                <div class="nav-card-url"><code>GET/POST/DELETE /api/todos</code></div>
+            </a>
+
+            <!-- Filter Info -->
+            <div class="nav-card info-card" id="card-filter">
+                <div class="nav-card-icon">🔍</div>
+                <h2>Logging Filter</h2>
+                <p>Filter chạy tự động trên MỌI request. Xem terminal/console để thấy log output.</p>
+                <div class="nav-card-tags">
+                    <span class="tag">Filter</span>
+                    <span class="tag">Middleware</span>
+                    <span class="tag">Logging</span>
+                </div>
+                <div class="nav-card-url"><code>Áp dụng cho /* (tất cả URL)</code></div>
+            </div>
+        </div>
+
+        <!-- Architecture Info -->
+        <div class="card architecture">
+            <h2>🏗️ Kiến trúc dự án</h2>
+            <pre class="tree">
+servlet/
+├── pom.xml                          ← Maven config (dependencies)
+├── README.md                        ← Tài liệu giải thích
+└── src/main/
+    ├── java/com/learn/servlet/
+    │   ├── HelloServlet.java        ← GET request cơ bản
+    │   ├── FormServlet.java         ← Xử lý form (GET/POST)
+    │   ├── SessionServlet.java      ← Quản lý session
+    │   ├── LifecycleServlet.java    ← Vòng đời servlet
+    │   ├── ApiServlet.java          ← REST API (JSON)
+    │   └── filter/
+    │       └── LoggingFilter.java   ← Filter (middleware)
+    └── webapp/
+        ├── WEB-INF/
+        │   └── web.xml              ← Deployment Descriptor
+        ├── index.html               ← Trang chủ (file này)
+        ├── api-test.html            ← Giao diện test API
+        ├── css/style.css            ← Stylesheet
+        └── error/
+            ├── 404.html             ← Trang lỗi 404
+            └── 500.html             ← Trang lỗi 500
+            </pre>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Servlet Learning Project &copy; 2026 | Built with ☕ Java Servlet API 4.0</p>
+        </footer>
+    </div>
+</body>
+</html>
